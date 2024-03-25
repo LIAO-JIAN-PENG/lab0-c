@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "list_sort.h"
 #include "queue.h"
 
 /* Notice: sometimes, Cppcheck would find the potential NULL pointer bugs,
@@ -10,6 +11,17 @@
  *   cppcheck-suppress nullPointer
  */
 
+/* Copare two elements */
+int compare(const struct list_head *a, const struct list_head *b)
+{
+    if (a == b)
+        return 0;
+
+    int res = strcmp(list_entry(a, element_t, list)->value,
+                     list_entry(b, element_t, list)->value);
+
+    return res;
+}
 
 /* Create an empty queue */
 struct list_head *q_new()
@@ -302,6 +314,12 @@ void q_sort(struct list_head *head, bool descend)
 
     if (descend)
         q_reverse(head);
+}
+
+/* Same as q_sort(), but with using linux list_sort */
+void q_sort2(struct list_head *head, bool descend)
+{
+    list_sort(head, compare, descend);
 }
 
 /* Remove every node which has a node with a strictly less value anywhere to
